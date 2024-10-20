@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>Activitat 1 - Unitat 1</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.min.css">
+</head>
+
+<body>
+  <main class="container">
+    <hgroup>
+      <h1>Llista de la compra</h1>
+      <p>Elements a la llista: <span id="count">0</span></p>
+    </hgroup>
+
+    <form>
+      <fieldset role="group">
+        <input id="value" type="text" placeholder="Exemple: Formatge ...">
+        <button id="addButton" type="button">Afegeix</button>
+        <button id="removeButton" class="secondary" type="button">Esborrar</button>
+      </fieldset>
+    </form>
+
+    <ul id="list"></ul>
+  </main>
+  <script src="scripts/script.js"></script>
+</body>
+
+</html>
