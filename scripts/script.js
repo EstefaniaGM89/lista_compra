@@ -1,67 +1,83 @@
 document.addEventListener('DOMContentLoaded', () => {
-
   const inputValue = document.getElementById('value');
   const addButton = document.getElementById('addButton');
   const removeButton = document.getElementById('removeButton');
   const list = document.getElementById('list');
   const count = document.getElementById('count');
   const maxItems = 10;
-  const placeholders = ['Formatge', 'Pa', 'Llet', 'Tomàquets', 'Ous', 'Enciam', 'Pasta', 'Arròs', 'Pollastre', 'Fruita']; // Llista predefinida per al placeholder
+  const errorMsg = document.createElement('p');
+  errorMsg.style.color = 'red';
+  count.parentNode.insertAdjacentElement('afterend', errorMsg);
 
-  // Actualitza el comptador d'elements
+  const counterMsg = document.createElement('p');
+  
+  count.parentNode.insertAdjacentElement('afterend', counterMsg);
+
+  const placeholders = ['Pa', 'Llet', 'Ous', 'Formatge', 'Tomàquets', 'Pasta', 'Aigua', 'Fruita', 'Arròs', 'Enciam'];
+
   const updateCount = () => {
     count.textContent = list.children.length;
-    addButton.disabled = list.children.length >= maxItems; // Deshabilitar botó si el límit s'ha assolit
+    const counterItems = maxItems - list.children.length;
+    counterMsg.textContent = `Queden ${counterItems} elements per afegir.`;
+
+    addButton.disabled = counterItems === 0;
   };
 
-  // Funció per canviar el placeholder de l'input de forma aleatòria
-  const changePlaceholder = () => {
+  const updatePlaceholder = () => {
     const randomIndex = Math.floor(Math.random() * placeholders.length);
-    inputValue.placeholder = `Exemple: ${placeholders[randomIndex]} ...`;
+    inputValue.placeholder = `Exemple: ${placeholders[randomIndex]}...`;
   };
 
-  // Comprova si l'element ja existeix a la llista
-  const isDuplicate = (value) => {
-    return Array.from(list.children).some(item => item.textContent.replace('Eliminar', '').trim() === value);
-  };
-
-  // Afegeix un nou element a la llista
   const addItem = () => {
     const value = inputValue.value.trim();
-    if (value === '') return;
 
-    if (isDuplicate(value)) {
-      alert('Aquest element ja existeix!'); // Mostrar missatge d'error si és un duplicat
+    const isDuplicate = Array.from(list.children).some(item => item.firstChild.textContent === value);
+    if (isDuplicate) {
+      errorMsg.textContent = 'Error! Aquest element ja existeix.';
       return;
+    } else {
+      errorMsg.textContent = '';
     }
 
-    const newItem = document.createElement('li'); 
-    newItem.textContent = value;
+    if (value !== '' && list.children.length < maxItems) {
+      const newItem = document.createElement('li'); 
 
-    // Afegir botó d'eliminar
-    const deleteButton = document.createElement('button');
-    deleteButton.textContent = 'Eliminar';
-    deleteButton.className = 'secondary';
-    deleteButton.addEventListener('click', () => {
-      list.removeChild(newItem);
+      const itemText = document.createElement('span');
+      itemText.textContent = value;
+      newItem.appendChild(itemText);
+
+      const deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Eliminar';
+      deleteButton.className = 'secondary';
+      deleteButton.addEventListener('click', () => {
+        list.removeChild(newItem);
+        updateCount();
+        addButton.disabled = list.children.length >= maxItems;
+      });
+
+      newItem.appendChild(deleteButton);
+      list.insertBefore(newItem, list.firstChild);
+
+      inputValue.value = '';
       updateCount();
+      updatePlaceholder();
+      inputValue.focus();
+
+      itemText.addEventListener('click', () => {
+        if (itemText.style.textDecoration === 'line-through') {
+            itemText.style.textDecoration = '';
+        } else {
+            itemText.style.textDecoration = 'line-through';
+            itemText.style.textDecorationColor = 'red';
+        }
     });
 
-    newItem.appendChild(deleteButton);
-    list.insertBefore(newItem, list.firstChild);
-
-    // Marcar com a comprat o descomptat
-    newItem.addEventListener('click', () => {
-      newItem.style.textDecoration = newItem.style.textDecoration === 'line-through' ? '' : 'line-through';
-    });
-
-    inputValue.value = '';
-    updateCount();
-    inputValue.focus();
-    changePlaceholder(); // Canviar el placeholder després d'afegir l'element
+      if (list.children.length >= maxItems) {
+        addButton.disabled = true;
+      }
+    }
   };
 
-  // Buidar la llista
   const clearList = (callback) => {
     const itemCount = list.children.length;
     const confirmBox = window.confirm(`Vols buidar la llista? Hi ha ${itemCount} elements.`);
@@ -69,6 +85,7 @@ document.addEventListener('DOMContentLoaded', () => {
       list.innerHTML = '';
       updateCount();
       callback();
+      addButton.disabled = false;
     }
   };
 
@@ -80,7 +97,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
     }
   });
-
-  // Inicia el placeholder de manera aleatòria
-  changePlaceholder();
+  
+  updateCount();
+  updatePlaceholder();
 });
