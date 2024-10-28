@@ -10,7 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
   count.parentNode.insertAdjacentElement('afterend', errorMsg);
 
   const counterMsg = document.createElement('p');
-  
   count.parentNode.insertAdjacentElement('afterend', counterMsg);
 
   const placeholders = ['Pa', 'Llet', 'Ous', 'Formatge', 'Tomàquets', 'Pasta', 'Aigua', 'Fruita', 'Arròs', 'Enciam'];
@@ -49,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const deleteButton = document.createElement('button');
       deleteButton.textContent = 'Eliminar';
       deleteButton.className = 'secondary';
-      deleteButton.addEventListener('click', () => {
+      deleteButton.addEventListener('click', function() {
         list.removeChild(newItem);
         updateCount();
         addButton.disabled = list.children.length >= maxItems;
@@ -63,14 +62,14 @@ document.addEventListener('DOMContentLoaded', () => {
       updatePlaceholder();
       inputValue.focus();
 
-      itemText.addEventListener('click', () => {
-        if (itemText.style.textDecoration === 'line-through') {
-            itemText.style.textDecoration = '';
+      itemText.addEventListener('click', function() {
+        if (this.style.textDecoration === 'line-through') {
+          this.style.textDecoration = '';
         } else {
-            itemText.style.textDecoration = 'line-through';
-            itemText.style.textDecorationColor = 'red';
+          this.style.textDecoration = 'line-through';
+          this.style.textDecorationColor = 'red';
         }
-    });
+      });
 
       if (list.children.length >= maxItems) {
         addButton.disabled = true;
@@ -97,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
       event.preventDefault();
     }
   });
-  
+
   updateCount();
   updatePlaceholder();
 });
